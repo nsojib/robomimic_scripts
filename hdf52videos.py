@@ -43,20 +43,22 @@ def main(dataset_path, save_dir, mask_name):
     if save_dir==None:
         save_dir = os.path.join(os.path.dirname(dataset_path), "videos")
 
-    if mask_name!=None:
-        save_dir = os.path.join(save_dir, mask_name)
-
+    if not os.path.exists(save_dir):
+        os.mkdir(save_dir)
     print(f'dataset: {dataset_path}')
     print(f'save to: {save_dir}')
 
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
-    
+
     f = h5py.File(dataset_path, "r")
     demos = list(f["data"].keys())
     num_demos = len(demos)
-    print("hdf5 file {} has {} demonstrations".format(dataset_path, num_demos))
-
+    print(f"hdf5 file {dataset_path} has {num_demos} demonstrations")
+    masks=[]
+    if mask_name!=None:
+        if mask_name=='all':
+            masks=f['mask'].keys()
+        else:
+            masks=[mask_name]
 
     is_normalized = 'mins' in f.keys()
     action_mins = None
@@ -81,13 +83,26 @@ def main(dataset_path, save_dir, mask_name):
     )
     ObsUtils.initialize_obs_utils_with_obs_specs(obs_modality_specs=dummy_spec)
 
-    demos=[b  for b in f['data'].keys()]  
-    if mask_name!=None:
-        demos=[b  for b in f['mask'][mask_name]] 
+
+
+    if len(masks)>0:
+        parent_dir=save_dir
+        for mask_name in masks:
+            save_dir = os.path.join(parent_dir, mask_name)
+            if not os.path.exists(save_dir):
+                os.mkdir(save_dir)
         
-    for i, demo_key in enumerate(demos):
-        print(f'#demo {i+1}/{len(demos)} {demo_key}')
-        playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs)
+            demos=[demo.decode('utf-8') for demo in f['mask'][mask_name]] 
+            for i, demo_key in enumerate(demos):
+                print(f'#demo {i+1}/{len(demos)} {demo_key}')
+                playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs)
+
+    else: 
+        demos=[b  for b in f['data'].keys()]   
+            
+        for i, demo_key in enumerate(demos):
+            print(f'#demo {i+1}/{len(demos)} {demo_key}')
+            playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs)
 
 
 if __name__=='__main__':
@@ -103,3 +118,5 @@ if __name__=='__main__':
 
 # python hdf52videos.py --dataset  /home/ns/collect_robomimic_demos/Lift_01_25_2024_03_27PM_sojib/demo_image.hdf5
 
+# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/lift_mixed_v0.hdf5 --mask=all
+    
