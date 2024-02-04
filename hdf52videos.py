@@ -120,3 +120,4 @@ if __name__=='__main__':
 
 # python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/lift_mixed_v0.hdf5 --mask=all
     
+# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/demo_image_sub.hdf5 --mask=failed

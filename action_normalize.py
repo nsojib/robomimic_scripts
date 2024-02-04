@@ -27,6 +27,12 @@ def main(dataset_path):
     f = h5py.File(dataset_path, "r+")
     demos = list(f["data"].keys())
 
+    #check if already normalize or not
+    is_normalized = 'mins' in f.keys()
+    if is_normalized:
+        print('Already normalized')
+        return
+
     lengths=[]
     demos_minmax={}
     for demo_name in demos:
@@ -93,5 +99,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(args.dataset)
 
-
-# python action_normalize.py --dataset /home/ns/robosuite/collects/1705874644_525442/demo101_jan21_image_group.hdf5
+ 
