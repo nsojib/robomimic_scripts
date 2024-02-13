@@ -59,6 +59,8 @@ def main(dataset_path, save_dir, mask_name):
             masks=f['mask'].keys()
         else:
             masks=[mask_name]
+    else:
+        masks=f['mask'].keys()
 
     is_normalized = 'mins' in f.keys()
     action_mins = None
@@ -118,6 +120,6 @@ if __name__=='__main__':
 
 # python hdf52videos.py --dataset  /home/ns/collect_robomimic_demos/Lift_01_25_2024_03_27PM_sojib/demo_image.hdf5
 
-# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/lift_mixed_v0.hdf5 --mask=all
+# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/lift_image_300_v1.hdf5 --mask=all
     
-# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/demo_image_sub.hdf5 --mask=failed
+# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/can_data_all/expert_150.hdf5 --mask=all
