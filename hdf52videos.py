@@ -10,9 +10,9 @@ import robomimic.utils.obs_utils as ObsUtils
 import imageio
 import matplotlib.pyplot as plt
 import argparse
+import cv2
 
-
-def playback_and_save(demo_key, f,  env, tosave, is_normalized, action_mins, action_maxs):
+def playback_and_save(demo_key, f,  env, tosave, is_normalized, action_mins, action_maxs, show_timestep=False):
     video_path = os.path.join(tosave, demo_key+".mp4")
     video_writer = imageio.get_writer(video_path, fps=20)
     
@@ -34,12 +34,15 @@ def playback_and_save(demo_key, f,  env, tosave, is_normalized, action_mins, act
     for t in range(actions.shape[0]):
         env.step(actions[t])
         video_img = env.render(mode="rgb_array", height=512, width=512, camera_name="agentview")
+        video_img = np.ascontiguousarray(video_img, dtype=np.uint8)
+        if show_timestep:
+            cv2.putText(video_img, str(t), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)   #write timestep on image
         video_writer.append_data(video_img)
 
     video_writer.close()
     print('saved to',video_path)
 
-def main(dataset_path, save_dir, mask_name):
+def main(dataset_path, save_dir, mask_name, show_timestep=False):
     if save_dir==None:
         save_dir = os.path.join(os.path.dirname(dataset_path), "videos")
 
@@ -97,14 +100,14 @@ def main(dataset_path, save_dir, mask_name):
             demos=[demo.decode('utf-8') for demo in f['mask'][mask_name]] 
             for i, demo_key in enumerate(demos):
                 print(f'#demo {i+1}/{len(demos)} {demo_key}')
-                playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs)
+                playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs, show_timestep)
 
     else: 
         demos=[b  for b in f['data'].keys()]   
             
         for i, demo_key in enumerate(demos):
             print(f'#demo {i+1}/{len(demos)} {demo_key}')
-            playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs)
+            playback_and_save(demo_key, f, env, save_dir, is_normalized, action_mins, action_maxs, show_timestep)
 
 
 if __name__=='__main__':
@@ -112,8 +115,9 @@ if __name__=='__main__':
     args.add_argument('--dataset', type=str, help='path to input hdf5 dataset', required=True)
     args.add_argument('--save_dir', type=str, help='path to save directory')
     args.add_argument('--mask', type=str, help='mask name')
+    args.add_argument('--show_timestep', action='store_true', help='show timestep on video')
     args = args.parse_args()
-    main(args.dataset, args.save_dir, args.mask)
+    main(args.dataset, args.save_dir, args.mask, args.show_timestep)
 
 # python hdf52videos.py --dataset /home/ns/robosuite/collects/1705874644_525442/demo101_jan21_image.hdf5
 # python hdf52videos.py --dataset /home/ns/robosuite/collects/1705957050_231826/marzan271_image.hdf5
@@ -122,4 +126,8 @@ if __name__=='__main__':
 
 # python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/lift_image_300_v1.hdf5 --mask=all
     
-# python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/can_data_all/expert_150.hdf5 --mask=all
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/lift_carl_mix_v3_340.hdf5
+
+#  MUJOCO_GL=egl CUDA_VISIBLE_DEVICES=0 python hdf52videos.py --dataset /home/ns1254/robomimic/datasets/can/paired/image+groups_v141.hdf5 --mask=g80b20
+
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/can_carl_mix_v3_510.hdf5 --mask=p20b
