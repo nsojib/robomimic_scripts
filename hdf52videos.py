@@ -131,3 +131,20 @@ if __name__=='__main__':
 #  MUJOCO_GL=egl CUDA_VISIBLE_DEVICES=0 python hdf52videos.py --dataset /home/ns1254/robomimic/datasets/can/paired/image+groups_v141.hdf5 --mask=g80b20
 
 # python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/can_carl_mix_v3_510.hdf5 --mask=p20b
+
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/lift_carl_mix_v4_260.hdf5 --mask=g30b20
+
+# python hdf52videos.py --dataset /home/ns1254/robomimic/datasets/can/paired/image+groups_v141.hdf5 --mask=g60b40
+
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/lift_carl_mix_v4_260.hdf5 --mask=p20i
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/lift_carl_mix_v4_260.hdf5 --mask=p20tg
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/lift_carl_mix_v4_260.hdf5 --mask=g30b20tg
+
+# python hdf52videos.py --dataset /home/ns1254/robomimic/datasets/square/mh/image_v141.hdf5 --mask=worse_better
+# python hdf52videos.py --dataset /home/ns1254/robomimic/datasets/square/mh/image_v141.hdf5 --mask=worse
+
+
+
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/square_carl_mix_v3_180.hdf5 --mask=bad
+# python hdf52videos.py --dataset /home/ns1254/data_robomimic/carl_dataset/mixed_human_original/square_carl_mix_v3_180.hdf5 --mask=try_good
+

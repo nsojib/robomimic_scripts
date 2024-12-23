@@ -27,11 +27,7 @@ def main(dataset_path):
     f = h5py.File(dataset_path, "r+")
     demos = list(f["data"].keys())
 
-    #check if already normalize or not
-    is_normalized = 'mins' in f.keys()
-    if is_normalized:
-        print('Already normalized')
-        return
+
 
     lengths=[]
     demos_minmax={}
@@ -53,6 +49,8 @@ def main(dataset_path):
     print('Mean length: ', np.mean(lengths))
 
 
+
+
     mins,maxs=[],[]
     for demo_name in demos_minmax.keys():
         min,max= demos_minmax[demo_name]
@@ -64,6 +62,13 @@ def main(dataset_path):
     
     print('mins: ', mins)
     print('maxs: ', maxs)
+    
+    #check if already normalize or not
+    is_normalized = 'mins' in f.keys()
+    if is_normalized:
+        print('Already normalized')
+        return
+    
     
     if np.all(mins==-1) and np.all(maxs==1):
         print('Dataset is already normalized')
