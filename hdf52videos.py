@@ -123,3 +123,5 @@ if __name__=='__main__':
 # python hdf52videos.py --dataset /home/ns/collect_robomimic_demos/processed/lift_image_300_v1.hdf5 --mask=all
 # python hdf52videos.py --dataset /home/ns1254/robomimic/datasets/square/mh/image_v141.hdf5 --mask=worse
 
+# python hdf52videos.py --dataset /home/ns1254/demonstration-information/envs/robomimic/datasets/can/mh/image.hdf5 --mask=better
+
