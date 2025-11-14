@@ -54,8 +54,7 @@ def create_hdf5_filter_key(hdf5_path, demo_keys, key_name):
     return ep_lengths
 
 
-def main(dataset_path, group_videos):
-    
+def create_groups_from_videos(dataset_path, group_videos):
     if group_videos is None:
         path=os.path.dirname(dataset_path)
         group_videos=path+"/videos/"
@@ -70,6 +69,8 @@ def main(dataset_path, group_videos):
     print('group_videos', group_videos)
     groups=[f for f in glob.glob(group_videos+'*') if os.path.isdir(f) ]
     print('Total groups', len(groups)) 
+
+
 
     # return
 
@@ -98,13 +99,41 @@ def main(dataset_path, group_videos):
         print('\n\n: ', filter_name,  filter_lengths)
     f.close()
 
+def main(dataset_path, group_videos=None, from_groups=None, new_group_name=None):
+    if group_videos is not None:
+        create_groups_from_videos(dataset_path, group_videos)
+    elif from_groups is not None:
+        f = h5py.File(dataset_path, "r")
+        all_demos=[]
+        for group_name in from_groups:
+            group_demos=[demo.decode('utf-8') for demo in f['mask'][group_name]]
+            all_demos.extend(group_demos)
+        all_demos=np.array(all_demos, dtype='S8') 
+        f.close()
+        create_hdf5_filter_key(hdf5_path=dataset_path, demo_keys=all_demos, key_name=new_group_name)
+        print(f'Created new group {new_group_name} with {len(all_demos)} demos')
+    else:
+        print('Either group_videos or from_groups must be provided')
+
+
 
 if __name__=='__main__':
     args = argparse.ArgumentParser()
     args.add_argument('--dataset', type=str, help='path to input hdf5 dataset', required=True)
     args.add_argument('--group_videos', type=str, help='path to groups') 
+    args.add_argument('--from_groups',  nargs='+', help='list of group names to create')
+    args.add_argument('--group_name', type=str, help='name of the group') 
     args = args.parse_args()
-    main(args.dataset, args.group_videos)
+    main(args.dataset, args.group_videos, args.from_groups, args.group_name)
+
+
+# python create_groups.py \
+#     --dataset /workspaces/devcontainer/diffusion_policy/data/robomimic/datasets/lift/mg/low_dim_abs.hdf5 \
+#     --from_groups okay better \
+#     --group_name "okay_better"
+
+
+
 
 # python create_groups.py --dataset /home/ns/robosuite/collects/1705874644_525442/demo101_jan21_image_group.hdf5 --group_videos /home/ns/robosuite/collects/1705874644_525442/videos
     
